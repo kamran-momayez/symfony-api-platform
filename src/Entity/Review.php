@@ -5,6 +5,8 @@ namespace App\Entity;
 use ApiPlatform\Metadata\ApiResource;
 use App\Repository\ReviewRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Constraints\NotNull;
 
 #[ORM\Entity(repositoryClass: ReviewRepository::class)]
 #[ApiResource]
@@ -16,9 +18,11 @@ class Review
     private ?int $id = null;
 
     #[ORM\Column]
+    #[NotNull]
     private ?int $starRating = null;
 
     #[ORM\Column(length: 255)]
+    #[NotBlank]
     private ?string $reviewText = null;
 
     #[ORM\ManyToOne(inversedBy: 'reviews')]

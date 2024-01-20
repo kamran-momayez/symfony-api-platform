@@ -7,6 +7,7 @@ use App\Repository\CarRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints\NotBlank;
 
 #[ORM\Entity(repositoryClass: CarRepository::class)]
 #[ApiResource]
@@ -18,12 +19,15 @@ class Car
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[NotBlank]
     private ?string $brand = null;
 
     #[ORM\Column(length: 255)]
+    #[NotBlank]
     private ?string $model = null;
 
     #[ORM\Column(length: 255)]
+    #[NotBlank]
     private ?string $color = null;
 
     #[ORM\OneToMany(
