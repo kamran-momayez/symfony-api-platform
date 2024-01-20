@@ -8,6 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\NotNull;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints\Range;
 
 #[ORM\Entity(repositoryClass: ReviewRepository::class)]
 #[ApiResource(
@@ -23,6 +24,10 @@ class Review
     private ?int $id = null;
 
     #[ORM\Column]
+    #[Range(
+        min: 1,
+        max: 10,
+        notInRangeMessage: 'starRating must be between {{ min }} and {{ max }}')]
     #[NotNull]
     #[Groups(['review.read', 'car.read'])]
     private ?int $starRating = null;
