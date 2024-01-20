@@ -8,32 +8,42 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: CarRepository::class)]
-#[ApiResource]
+#[ApiResource(
+    description: 'A car entity to store car specifications',
+    normalizationContext: ['groups' => ['car.read']],
+    denormalizationContext: ['groups' => ['car.write']]
+)]
 class Car
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['car.read'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
     #[NotBlank]
+    #[Groups(['car.read', 'car.write', 'review.read'])]
     private ?string $brand = null;
 
     #[ORM\Column(length: 255)]
     #[NotBlank]
+    #[Groups(['car.read', 'car.write', 'review.read'])]
     private ?string $model = null;
 
     #[ORM\Column(length: 255)]
     #[NotBlank]
+    #[Groups(['car.read', 'car.write', 'review.read'])]
     private ?string $color = null;
 
     #[ORM\OneToMany(
         mappedBy: 'car',
         targetEntity: Review::class,
         cascade: ["persist", "remove"])]
+    #[Groups(['car.read'])]
     private Collection $reviews;
 
     public function __construct()

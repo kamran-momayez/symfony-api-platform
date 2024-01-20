@@ -7,26 +7,34 @@ use App\Repository\ReviewRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\NotNull;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: ReviewRepository::class)]
-#[ApiResource]
+#[ApiResource(
+    description: 'A car review entity to store car reviews',
+    normalizationContext: ['groups' => ['review.read']]
+)]
 class Review
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['review.read'])]
     private ?int $id = null;
 
     #[ORM\Column]
     #[NotNull]
+    #[Groups(['review.read', 'car.read'])]
     private ?int $starRating = null;
 
     #[ORM\Column(length: 255)]
     #[NotBlank]
+    #[Groups(['review.read', 'car.read'])]
     private ?string $reviewText = null;
 
     #[ORM\ManyToOne(inversedBy: 'reviews')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(['review.read'])]
     private ?Car $car = null;
 
     public function getId(): ?int
