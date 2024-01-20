@@ -21,6 +21,10 @@ class Review
     #[ORM\Column(length: 255)]
     private ?string $reviewText = null;
 
+    #[ORM\ManyToOne(inversedBy: 'reviews')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Car $car = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -46,6 +50,18 @@ class Review
     public function setReviewText(string $reviewText): static
     {
         $this->reviewText = $reviewText;
+
+        return $this;
+    }
+
+    public function getCar(): ?Car
+    {
+        return $this->car;
+    }
+
+    public function setCar(?Car $car): static
+    {
+        $this->car = $car;
 
         return $this;
     }
