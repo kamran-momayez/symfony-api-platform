@@ -3,6 +3,13 @@
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Delete;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Patch;
+use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Put;
+use App\Controller\CarReviewsController;
 use App\Repository\CarRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -14,7 +21,21 @@ use Symfony\Component\Serializer\Annotation\Groups;
 #[ApiResource(
     description: 'A car entity to store car specifications',
     normalizationContext: ['groups' => ['car.read']],
-    denormalizationContext: ['groups' => ['car.write']]
+    denormalizationContext: ['groups' => ['car.write']],
+    operations: [
+        new Get(
+            name: 'latest_top_rated_car_reviews',
+            uriTemplate: '/cars/{id}/reviews/latest-top-rated',
+            controller: CarReviewsController::class,
+            description: 'Retrives top 5 reviews of a car that its starRating is above 6',
+        ),
+        new Get(),
+        new GetCollection(),
+        new Post(),
+        new Put(),
+        new Patch(),
+        new Delete()
+    ]
 )]
 class Car
 {
@@ -42,7 +63,8 @@ class Car
     #[ORM\OneToMany(
         mappedBy: 'car',
         targetEntity: Review::class,
-        cascade: ["persist", "remove"])]
+        cascade: ["persist", "remove"]
+    )]
     #[Groups(['car.read'])]
     private Collection $reviews;
 
