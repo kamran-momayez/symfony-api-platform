@@ -20,4 +20,13 @@ class CarRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Car::class);
     }
+
+    public function findOne($order = 'ASC'): array
+    {
+        return $this->createQueryBuilder('c')
+            ->orderBy('c.id', $order)
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getArrayResult();
+    }
 }

@@ -3,6 +3,7 @@
 namespace App\Tests;
 
 use ApiPlatform\Symfony\Bundle\Test\ApiTestCase;
+use App\Entity\Car;
 use App\Entity\Review;
 use Hautelook\AliceBundle\PhpUnit\RefreshDatabaseTrait;
 
@@ -27,16 +28,18 @@ class ReviewTest extends ApiTestCase
 
     public function testGet(): void
     {
-        static::createClient()->request('GET', '/api/reviews/1');
+        $reviewId = (static::getContainer()->get('doctrine')->getRepository(Review::class)->findOne())[0]['id'];
+
+        static::createClient()->request('GET', '/api/reviews/' . $reviewId);
 
         $this->assertResponseIsSuccessful();
         $this->assertResponseHeaderSame('content-type', 'application/ld+json; charset=utf-8');
 
         $this->assertJsonContains([
             '@context' => '/api/contexts/Review',
-            '@id' => '/api/reviews/1',
+            '@id' => '/api/reviews/' . $reviewId,
             '@type' => 'Review',
-            'id' => 1,
+            'id' => $reviewId,
             'car' => [
                 '@type' => 'Car'
             ]
@@ -45,7 +48,9 @@ class ReviewTest extends ApiTestCase
 
     public function testGetNotFound(): void
     {
-        static::createClient()->request('GET', '/api/reviews/21');
+        $reviewId = (static::getContainer()->get('doctrine')->getRepository(Review::class)->findOne('DESC'))[0]['id'];
+
+        static::createClient()->request('GET', '/api/reviews/' . $reviewId + 1);
 
         $this->assertResponseStatusCodeSame(404);
         $this->assertResponseHeaderSame('content-type', 'application/problem+json; charset=utf-8');
@@ -60,11 +65,13 @@ class ReviewTest extends ApiTestCase
 
     public function testCreate(): void
     {
+        $carId = (static::getContainer()->get('doctrine')->getRepository(Car::class)->findOne())[0]['id'];
+
         static::createClient()->request('POST', '/api/reviews', [
             'json' => [
                 'starRating' => 9,
                 'reviewText' => 'This is awesome!',
-                'car' => '/api/cars/1',
+                'car' => '/api/cars/' . $carId,
             ]
         ]);
 
@@ -77,7 +84,7 @@ class ReviewTest extends ApiTestCase
             'starRating' => 9,
             'reviewText' => 'This is awesome!',
             'car' => [
-                '@id' => '/api/cars/1'
+                '@id' => '/api/cars/' . $carId
             ]
 
         ]);
@@ -89,7 +96,6 @@ class ReviewTest extends ApiTestCase
             'json' => [
                 'starRating' => 9,
                 'reviewText' => '',
-                'car' => '/api/cars/1',
             ]
         ]);
 
@@ -108,7 +114,6 @@ class ReviewTest extends ApiTestCase
         static::createClient()->request('POST', '/api/reviews', [
             'json' => [
                 'starRating' => 9,
-                'car' => '/api/cars/1',
             ]
         ]);
 
@@ -147,7 +152,6 @@ class ReviewTest extends ApiTestCase
             'json' => [
                 'starRating' => 11,
                 'reviewText' => 'This is awesome!',
-                'car' => '/api/cars/1',
             ]
         ]);
 
@@ -163,7 +167,9 @@ class ReviewTest extends ApiTestCase
 
     public function testPatch(): void
     {
-        static::createClient()->request('PATCH', '/api/reviews/1', [
+        $reviewId = (static::getContainer()->get('doctrine')->getRepository(Review::class)->findOne())[0]['id'];
+
+        static::createClient()->request('PATCH', '/api/reviews/' . $reviewId, [
             'json' => [
                 'starRating' => 3,
             ],
@@ -174,19 +180,22 @@ class ReviewTest extends ApiTestCase
 
         $this->assertResponseIsSuccessful();
         $this->assertJsonContains([
-            '@id' => '/api/reviews/1',
-            'id' => 1,
+            '@id' => '/api/reviews/' . $reviewId,
+            'id' => $reviewId,
             'starRating' => 3,
         ]);
     }
 
     public function testPut(): void
     {
-        static::createClient()->request('PUT', '/api/reviews/1', [
+        $reviewId = (static::getContainer()->get('doctrine')->getRepository(Review::class)->findOne())[0]['id'];
+        $carId = (static::getContainer()->get('doctrine')->getRepository(Car::class)->findOne())[0]['id'];
+
+        static::createClient()->request('PUT', '/api/reviews/' . $reviewId, [
             'json' => [
                 'starRating' => 9,
                 'reviewText' => 'This is awesome!',
-                'car' => '/api/cars/1'
+                'car' => '/api/cars/' . $carId
             ]
         ]);
 
@@ -197,18 +206,20 @@ class ReviewTest extends ApiTestCase
             'starRating' => 9,
             'reviewText' => 'This is awesome!',
             'car' => [
-                '@id' => '/api/cars/1'
+                '@id' => '/api/cars/' . $carId
             ]
         ]);
     }
 
     public function testDelete(): void
     {
-        static::createClient()->request('DELETE', '/api/reviews/1');
+        $reviewId = (static::getContainer()->get('doctrine')->getRepository(Review::class)->findOne())[0]['id'];
+
+        static::createClient()->request('DELETE', '/api/reviews/' . $reviewId);
 
         $this->assertResponseStatusCodeSame(204);
         $this->assertNull(
-            static::getContainer()->get('doctrine')->getRepository(Review::class)->findOneBy(['id' => 1])
+            static::getContainer()->get('doctrine')->getRepository(Review::class)->findOneBy(['id' => $reviewId])
         );
     }
 }

@@ -32,4 +32,13 @@ class ReviewRepository extends ServiceEntityRepository
             ->getQuery()
             ->getArrayResult();
     }
+
+    public function findOne($order = 'ASC'): array
+    {
+        return $this->createQueryBuilder('r')
+            ->orderBy('r.id', $order)
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getArrayResult();
+    }
 }

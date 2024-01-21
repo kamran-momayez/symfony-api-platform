@@ -29,23 +29,26 @@ class CarTest extends ApiTestCase
 
     public function testGet(): void
     {
-        static::createClient()->request('GET', '/api/cars/1');
+        $carId = (static::getContainer()->get('doctrine')->getRepository(Car::class)->findOne())[0]['id'];
+        
+        static::createClient()->request('GET', '/api/cars/' . $carId);
 
         $this->assertResponseIsSuccessful();
         $this->assertResponseHeaderSame('content-type', 'application/ld+json; charset=utf-8');
 
         $this->assertJsonContains([
             '@context' => '/api/contexts/Car',
-            '@id' => '/api/cars/1',
+            '@id' => '/api/cars/' . $carId,
             '@type' => 'Car',
-            'id' => 1,
+            'id' => $carId,
         ]);
         $this->assertMatchesResourceItemJsonSchema(Car::class);
     }
 
     public function testGetNotFound(): void
     {
-        static::createClient()->request('GET', '/api/cars/10');
+        $carId = (static::getContainer()->get('doctrine')->getRepository(Car::class)->findOne('DESC'))[0]['id'];
+        static::createClient()->request('GET', '/api/cars/' . $carId + 1);
 
         $this->assertResponseStatusCodeSame(404);
         $this->assertResponseHeaderSame('content-type', 'application/problem+json; charset=utf-8');
@@ -142,7 +145,9 @@ color: This value should not be blank.',
 
     public function testPatch(): void
     {
-        static::createClient()->request('PATCH', '/api/cars/1', [
+        $carId = (static::getContainer()->get('doctrine')->getRepository(Car::class)->findOne())[0]['id'];
+
+        static::createClient()->request('PATCH', '/api/cars/' . $carId, [
             'json' => [
                 'color' => 'Blue',
             ],
@@ -153,15 +158,17 @@ color: This value should not be blank.',
 
         $this->assertResponseIsSuccessful();
         $this->assertJsonContains([
-            '@id' => '/api/cars/1',
-            'id' => 1,
+            '@id' => '/api/cars/' . $carId,
+            'id' => $carId,
             'color' => 'Blue',
         ]);
     }
 
     public function testPut(): void
     {
-        static::createClient()->request('PUT', '/api/cars/1', [
+        $carId = (static::getContainer()->get('doctrine')->getRepository(Car::class)->findOne())[0]['id'];
+
+        static::createClient()->request('PUT', '/api/cars/' . $carId, [
             'json' => [
                 'brand' => 'BMW',
                 'model' => 'X6',
@@ -182,11 +189,12 @@ color: This value should not be blank.',
 
     public function testDelete(): void
     {
-        static::createClient()->request('DELETE', '/api/cars/1');
+        $carId = (static::getContainer()->get('doctrine')->getRepository(Car::class)->findOne())[0]['id'];
+        static::createClient()->request('DELETE', '/api/cars/' . $carId);
 
         $this->assertResponseStatusCodeSame(204);
         $this->assertNull(
-            static::getContainer()->get('doctrine')->getRepository(Car::class)->findOneBy(['id' => 1])
+            static::getContainer()->get('doctrine')->getRepository(Car::class)->findOneBy(['id' => $carId])
         );
     }
 
@@ -229,7 +237,9 @@ color: This value should not be blank.',
 
     public function testGetLatestTopRatedCarReviewsNotFound(): void
     {
-        static::createClient()->request('GET', '/api/cars/10/reviews/latest-top-rated');
+        $carId = (static::getContainer()->get('doctrine')->getRepository(Car::class)->findOne('DESC'))[0]['id'] + 1;
+
+        static::createClient()->request('GET', "/api/cars/{$carId}/reviews/latest-top-rated");
 
         $this->assertResponseStatusCodeSame(404);
         $this->assertResponseHeaderSame('content-type', 'application/json');
