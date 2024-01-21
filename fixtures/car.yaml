@@ -1,0 +1,5 @@
+App\Entity\Car:
+    car_{1..5}:
+        brand (unique): <company()>
+        model: <bothify()>
+        color: <colorName()>

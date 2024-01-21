@@ -14,6 +14,8 @@ use App\Repository\CarRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\Mapping\UniqueConstraint;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Serializer\Annotation\Groups;
 
@@ -23,7 +25,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
     normalizationContext: ['groups' => ['car.read']],
     denormalizationContext: ['groups' => ['car.write']],
     operations: [
-        new Get(
+        new GetCollection(
             name: 'latest_top_rated_car_reviews',
             uriTemplate: '/cars/{id}/reviews/latest-top-rated',
             controller: CarReviewsController::class,
@@ -37,6 +39,8 @@ use Symfony\Component\Serializer\Annotation\Groups;
         new Delete()
     ]
 )]
+#[UniqueConstraint(fields: ['brand', 'model', 'color'])]
+#[UniqueEntity(['brand', 'model', 'color'])]
 class Car
 {
     #[ORM\Id]

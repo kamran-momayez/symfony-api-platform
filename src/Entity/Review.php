@@ -27,7 +27,7 @@ class Review
     #[Range(
         min: 1,
         max: 10,
-        notInRangeMessage: 'starRating must be between {{ min }} and {{ max }}')]
+        notInRangeMessage: 'starRating must be between {{ min }} and {{ max }}.')]
     #[NotNull]
     #[Groups(['review.read', 'car.read'])]
     private ?int $starRating = null;
