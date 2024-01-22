@@ -21,6 +21,11 @@ class ReviewRepository extends ServiceEntityRepository
         parent::__construct($registry, Review::class);
     }
 
+    /**
+     * @param int $carId
+     * @param int $limit
+     * @return array
+     */
     public function findLatestTopRatedReviewsForCar(int $carId, int $limit = 5): array
     {
         return $this->createQueryBuilder('r')
@@ -33,7 +38,11 @@ class ReviewRepository extends ServiceEntityRepository
             ->getArrayResult();
     }
 
-    public function findOne($order = 'ASC'): array
+    /**
+     * @param string|null $order
+     * @return array
+     */
+    public function findOne(?string $order = 'ASC'): array
     {
         return $this->createQueryBuilder('r')
             ->orderBy('r.id', $order)

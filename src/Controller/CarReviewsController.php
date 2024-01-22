@@ -9,7 +9,12 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 
 class CarReviewsController extends AbstractController
 {
-    public function __invoke(int $id, ReviewRepository $reviewRepository) : JsonResponse
+    /**
+     * @param int              $id
+     * @param ReviewRepository $reviewRepository
+     * @return JsonResponse
+     */
+    public function __invoke(int $id, ReviewRepository $reviewRepository): JsonResponse
     {
         $result = $reviewRepository->findLatestTopRatedReviewsForCar($id);
 

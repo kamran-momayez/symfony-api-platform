@@ -16,8 +16,8 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Mapping\UniqueConstraint;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
-use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints\NotBlank;
 
 #[ORM\Entity(repositoryClass: CarRepository::class)]
 #[ApiResource(
@@ -77,16 +77,26 @@ class Car
         $this->reviews = new ArrayCollection();
     }
 
+    /**
+     * @return int|null
+     */
     public function getId(): ?int
     {
         return $this->id;
     }
 
+    /**
+     * @return string|null
+     */
     public function getBrand(): ?string
     {
         return $this->brand;
     }
 
+    /**
+     * @param string $brand
+     * @return $this
+     */
     public function setBrand(string $brand): static
     {
         $this->brand = $brand;
@@ -94,11 +104,18 @@ class Car
         return $this;
     }
 
+    /**
+     * @return string|null
+     */
     public function getModel(): ?string
     {
         return $this->model;
     }
 
+    /**
+     * @param string $model
+     * @return $this
+     */
     public function setModel(string $model): static
     {
         $this->model = $model;
@@ -106,11 +123,18 @@ class Car
         return $this;
     }
 
+    /**
+     * @return string|null
+     */
     public function getColor(): ?string
     {
         return $this->color;
     }
 
+    /**
+     * @param string $color
+     * @return $this
+     */
     public function setColor(string $color): static
     {
         $this->color = $color;
@@ -126,6 +150,10 @@ class Car
         return $this->reviews;
     }
 
+    /**
+     * @param Review $review
+     * @return $this
+     */
     public function addReview(Review $review): static
     {
         if (!$this->reviews->contains($review)) {
@@ -136,6 +164,10 @@ class Car
         return $this;
     }
 
+    /**
+     * @param Review $review
+     * @return $this
+     */
     public function removeReview(Review $review): static
     {
         if ($this->reviews->removeElement($review)) {
