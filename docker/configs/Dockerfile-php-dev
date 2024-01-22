@@ -1,0 +1,12 @@
+FROM php:8.2-fpm-alpine
+RUN apk update
+RUN apk add git vim openssl libpq-dev
+RUN docker-php-ext-install pdo pdo_pgsql
+RUN apk add --update linux-headers
+RUN apk add --no-cache bash
+RUN curl -1sLf 'https://dl.cloudsmith.io/public/symfony/stable/setup.alpine.sh' | bash
+RUN apk add symfony-cli
+RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
+RUN php composer-setup.php --install-dir=/usr/local/bin --filename=composer
+RUN rm -rf composer-setup.php && composer config --global repos.packagist composer https://packagist.org
+WORKDIR /var/www/html

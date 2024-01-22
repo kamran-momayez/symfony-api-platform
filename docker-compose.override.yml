@@ -1,0 +1,22 @@
+version: "3"
+services:
+
+  postgres:
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./docker/data/postgres:/var/lib/postgresql/data
+  nginx:
+    build:
+      context: .
+      dockerfile: docker/configs/Dockerfile-nginx-dev
+    volumes:
+      - ./:/var/www/html/
+      - ./docker/logs/nginx:/var/log/nginx/
+  php:
+    build:
+      context: .
+      dockerfile: docker/configs/Dockerfile-php-dev
+    volumes:
+      - ./:/var/www/html/
+      - ./docker/logs/php:/var/log/fpm-php.www.log/

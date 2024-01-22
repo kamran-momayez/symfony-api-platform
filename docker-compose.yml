@@ -1,0 +1,28 @@
+version: "3"
+services:
+
+  postgres:
+    image: postgres:16
+    container_name: postgres
+    environment:
+      POSTGRES_DB: db
+      POSTGRES_PASSWORD: o584alvFi9BunK7
+
+  php:
+    image: php
+    container_name: php
+    depends_on:
+      - postgres
+
+  nginx:
+    image: nginx
+    container_name: nginx
+    ports:
+      - "8081:80"
+    depends_on:
+      - php
+
+networks:
+  default:
+    name: default-network
+    external: true
